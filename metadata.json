@@ -1,0 +1,6 @@
+{
+  "name": "Katalog Olumajang",
+  "description": "Katalog kuliner dan warung Olumajang, pesan langsung via WhatsApp dengan mudah dan cepat.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
