@@ -8,7 +8,8 @@
   ],
   "assets": {
     "directory": "./dist",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
   },
   "vars": {
     "ADMIN_PASSWORD": "231288",

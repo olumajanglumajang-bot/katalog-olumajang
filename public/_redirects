@@ -1,3 +1,8 @@
-# Netlify Redirects for Katalog Olumajang
+# Redirects configuration for Katalog Olumajang
+# Netlify API proxy (routed to Netlify Functions)
 /api/*  /.netlify/functions/api/:splat  200
-/*      /index.html                     200
+
+# Catatan SPA fallback:
+# SPA route fallback (/* -> /index.html) dikonfigurasi di netlify.toml untuk Netlify,
+# dan ditangani secara native oleh Cloudflare Pages (tanpa 404.html) untuk mencegah
+# error 'Infinite loop detected' pada validator Cloudflare.

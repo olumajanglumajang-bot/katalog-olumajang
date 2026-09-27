@@ -338,7 +338,7 @@ app.put('/api/warung/:id', requireAdminAuth, (req: Request, res: Response) => {
 });
 
 // Upload Warung Logo from Gallery (Admin only)
-app.post('/api/warung/:id/logo', requireAdminAuth, upload.single('logo'), (req: Request, res: Response) => {
+app.post('/api/warung/:id/logo', requireAdminAuth, upload.single('logo') as any, (req: Request, res: Response) => {
   const catalog = readCatalog();
   const warung = catalog.warungs.find((w) => w.id === req.params.id);
 
@@ -456,7 +456,7 @@ app.delete('/api/warung/:id', requireAdminAuth, (req: Request, res: Response) =>
 app.post(
   '/api/warung/:id/photos',
   requireAdminAuth,
-  upload.array('photos', 50),
+  upload.array('photos', 50) as any,
   (req: Request, res: Response) => {
     const catalog = readCatalog();
     const warung = catalog.warungs.find((w) => w.id === req.params.id);
