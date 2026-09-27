@@ -21,3 +21,6 @@ ADMIN_SALT = "olumajang_secret_salt_2026"
 # [[kv_namespaces]]
 # binding = "CATALOG_KV"
 # id = "YOUR_KV_NAMESPACE_ID"
+[[kv_namespaces]]
+binding = "CATALOG_KV"
+id = "cf77cc053e5a461d936ffe6b639a1e5f"
