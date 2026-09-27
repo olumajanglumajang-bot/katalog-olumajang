@@ -120,7 +120,6 @@ export async function fetchWarungs(): Promise<Warung[]> {
     throw err;
   }
 }
-
 export async function loginAdmin(
   password: string
 ): Promise<{ success: boolean; token?: string; error?: string }> {
@@ -143,7 +142,7 @@ export async function loginAdmin(
       } catch {
         return {
           success: false,
-          error: `Server mengirim respons tidak valid (HTTP ${res.status}).`,
+          error: 'Server mengirim respons yang tidak valid.',
         };
       }
     }
@@ -151,14 +150,14 @@ export async function loginAdmin(
     if (!res.ok) {
       return {
         success: false,
-        error: data.error || `Server error (HTTP ${res.status}).`,
+        error: data.error || 'Server menolak login.',
       };
     }
 
     if (!data.token) {
       return {
         success: false,
-        error: `Login gagal: server tidak mengirim token (HTTP ${res.status}).`,
+        error: 'Login gagal: token tidak diterima dari server.',
       };
     }
 
@@ -178,17 +177,35 @@ export async function loginAdmin(
 
 export async function verifyAdminSession(): Promise<boolean> {
   const token = getAuthToken();
-  if (!token) return false;
+
+  if (!token) {
+    return false;
+  }
 
   try {
     const res = await apiFetch('/admin/verify', {
-      
-    const data = await res.json();
-    return Boolean(data.authenticated);
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const text = await res.text();
+
+    if (!res.ok || !text.trim()) {
+      return false;
+    }
+
+    try {
+      const data = JSON.parse(text);
+      return Boolean(data.authenticated);
+    } catch {
+      return false;
+    }
   } catch {
     return false;
   }
 }
+
 
 export async function logoutAdmin(): Promise<void> {
   const token = getAuthToken();
