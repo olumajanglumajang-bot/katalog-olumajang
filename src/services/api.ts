@@ -121,7 +121,9 @@ export async function fetchWarungs(): Promise<Warung[]> {
   }
 }
 
-export async function loginAdmin(password: string): Promise<{ success: boolean; token?: string; error?: string }> {
+export async function loginAdmin(
+  password: string
+): Promise<{ success: boolean; token?: string; error?: string }> {
   try {
     const res = await apiFetch('/admin/login', {
       method: 'POST',
@@ -131,17 +133,46 @@ export async function loginAdmin(password: string): Promise<{ success: boolean; 
       body: JSON.stringify({ password }),
     });
 
-    const data = await res.json();
-    if (!res.ok) {
-      return { success: false, error: data.error || 'Kata sandi salah.' };
+    const text = await res.text();
+
+    let data: any = {};
+
+    if (text.trim()) {
+      try {
+        data = JSON.parse(text);
+      } catch {
+        return {
+          success: false,
+          error: `Server mengirim respons tidak valid (HTTP ${res.status}).`,
+        };
+      }
     }
 
-    if (data.token) {
-      setAuthToken(data.token);
+    if (!res.ok) {
+      return {
+        success: false,
+        error: data.error || `Server error (HTTP ${res.status}).`,
+      };
     }
-    return { success: true, token: data.token };
+
+    if (!data.token) {
+      return {
+        success: false,
+        error: `Login gagal: server tidak mengirim token (HTTP ${res.status}).`,
+      };
+    }
+
+    setAuthToken(data.token);
+
+    return {
+      success: true,
+      token: data.token,
+    };
   } catch (err: any) {
-    return { success: false, error: err.message || 'Gagal menghubungi server.' };
+    return {
+      success: false,
+      error: err?.message || 'Gagal menghubungi server.',
+    };
   }
 }
 
@@ -151,11 +182,7 @@ export async function verifyAdminSession(): Promise<boolean> {
 
   try {
     const res = await apiFetch('/admin/verify', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (!res.ok) return false;
+      
     const data = await res.json();
     return Boolean(data.authenticated);
   } catch {
