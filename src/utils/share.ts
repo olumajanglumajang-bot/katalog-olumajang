@@ -18,6 +18,29 @@ export interface ShareResult {
  */
 async function getImageFileFromUrl(imageUrl: string, fileName: string): Promise<File | null> {
   try {
+    // Fast path: if already a base64 Data URL, convert directly to File without fetch
+    if (imageUrl.startsWith('data:')) {
+      try {
+        const parts = imageUrl.split(',');
+        const mimeMatch = parts[0].match(/:(.*?);/);
+        const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+        const bstr = atob(parts[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        const blob = new Blob([u8arr], { type: mime });
+        const ext = mime.includes('png') ? 'png' : mime.includes('webp') ? 'webp' : 'jpg';
+        return new File([blob], `${fileName.replace(/[^a-zA-Z0-9_-]/g, '_')}.${ext}`, {
+          type: mime,
+          lastModified: Date.now(),
+        });
+      } catch (dataErr) {
+        console.warn('[Share] Error direct parsing data URL, falling back to fetch:', dataErr);
+      }
+    }
+
     // If relative path like /uploads/..., resolve against window.location.origin
     const fullUrl = imageUrl.startsWith('http')
       ? imageUrl
