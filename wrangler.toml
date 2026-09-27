@@ -1,0 +1,22 @@
+name = "katalog-olumajang"
+main = "src/worker/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Cloudflare Workers Static Assets (serves Vite build output)
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+
+# Environment variables
+[vars]
+ADMIN_PASSWORD = "231288"
+ADMIN_SALT = "olumajang_secret_salt_2026"
+
+# Cloudflare KV for persistent catalog storage across edge nodes (optional)
+# Untuk mengaktifkan:
+# 1. Jalankan: npx wrangler kv:namespace create CATALOG_KV
+# 2. Buka komentar di bawah dan masukkan id namespace KV Anda:
+# [[kv_namespaces]]
+# binding = "CATALOG_KV"
+# id = "YOUR_KV_NAMESPACE_ID"
